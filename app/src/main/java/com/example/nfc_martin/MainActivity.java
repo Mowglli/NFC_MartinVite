@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                     if(myTag ==null) {
                         Toast.makeText(context, ERROR_DETECTED, Toast.LENGTH_LONG).show();
                     } else {
-                        write(message.getText().toString()+","+message2.getText().toString(), myTag);
+                        write(message.getText().toString()+";"+message2.getText().toString(), myTag);
                         Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_LONG ).show();
                     }
                 } catch (IOException e) {
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             Log.e("UnsupportedEncoding", e.toString());
         }
 
-        String[] setList = text.split(",");
+        String[] setList = text.split(";");
         String set1 = setList[0];
         String set2 = setList[1];
 
