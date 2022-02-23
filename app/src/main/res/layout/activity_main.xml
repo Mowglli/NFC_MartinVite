@@ -80,7 +80,7 @@
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="read1"
+        android:text="N/A"
         android:textSize="20dp"
         app:layout_constraintStart_toEndOf="@+id/txt_dmxadress"
         app:layout_constraintTop_toTopOf="@+id/txt_dmxadress" />
@@ -90,7 +90,7 @@
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="read2"
+        android:text="N/A"
         android:textSize="20dp"
         app:layout_constraintStart_toEndOf="@+id/txt_dmxmode"
         app:layout_constraintTop_toTopOf="@+id/txt_dmxmode" />
