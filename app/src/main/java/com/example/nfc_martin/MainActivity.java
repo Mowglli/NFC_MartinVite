@@ -104,11 +104,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void showProgressBar(){
+        //Removes progressbar after 5 seconds
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                //Do something after 100ms
+                //Do something after 5000ms
                 progressBar.setVisibility(View.INVISIBLE);
             }
         }, 5000);
