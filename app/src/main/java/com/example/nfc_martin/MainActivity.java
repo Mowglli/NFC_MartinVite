@@ -1,6 +1,5 @@
 package com.example.nfc_martin;
-
-
+// code is taken from
 //https://www.codexpedia.com/android/android-nfc-read-and-write-example/
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         setContentView(R.layout.activity_main);
         context = this;
 
