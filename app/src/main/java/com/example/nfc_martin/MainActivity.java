@@ -15,12 +15,15 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tvNFCContent,tvNFCContent1, txt_dmxadress, txt_mode, txt_udlæs,txt_opsæt;
     TextView message, message2;
     Button btnWrite;
+    ProgressBar progressBar;
 
     String set1;
     String set2;
@@ -58,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
         txt_mode = (TextView) findViewById(R.id.txt_dmxmode);
         txt_opsæt = (TextView) findViewById(R.id.txt_opsæt);
         txt_udlæs = (TextView) findViewById(R.id.txt_udlæs);
-
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
         message = (TextView) findViewById(R.id.edt_write);
         message2 = (TextView) findViewById(R.id.edt_write2);
         btnWrite = (Button) findViewById(R.id.btn_write);
@@ -67,20 +72,9 @@ public class MainActivity extends AppCompatActivity {
         {
             @Override
             public void onClick(View v) {
-                try {
-                    if(myTag ==null) {
-                        Toast.makeText(context, ERROR_DETECTED, Toast.LENGTH_LONG).show();
-                    } else {
-                        write(message.getText().toString()+";"+message2.getText().toString(), myTag);
-                        Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_LONG ).show();
-                    }
-                } catch (IOException e) {
-                    Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG ).show();
-                    e.printStackTrace();
-                } catch (FormatException e) {
-                    Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG ).show();
-                    e.printStackTrace();
-                }
+                progressBar.setVisibility(View.VISIBLE);
+                doTask(5000);
+                showProgressBar();
             }
         });
 
@@ -96,6 +90,44 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
         tagDetected.addCategory(Intent.CATEGORY_DEFAULT);
         writeTagFilters = new IntentFilter[] { tagDetected };
+    }
+    private void doTask(long endTimeMillis) {
+        writeSettings();
+        // do something
+
+        long now = System.currentTimeMillis();
+        if (now < endTimeMillis) {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                doTask(endTimeMillis);
+
+            }, 1L);
+        }
+    }
+    private void showProgressBar(){
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 100ms
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        }, 5000);
+    }
+    private void writeSettings(){
+            try {
+                if (myTag == null) {
+                    //Toast.makeText(context, ERROR_DETECTED, Toast.LENGTH_LONG).show();
+                } else {
+                    write(message.getText().toString() + ";" + message2.getText().toString(), myTag);
+                    Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_LONG).show();
+                }
+            } catch (IOException e) {
+                //Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            } catch (FormatException e) {
+                //Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
     }
 
 
