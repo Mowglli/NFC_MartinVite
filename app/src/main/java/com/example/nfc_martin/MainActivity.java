@@ -55,7 +55,24 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         context = this;
+        setupUI();
 
+
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        if (nfcAdapter == null) {
+            // Stop here, we definitely need NFC
+            Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
+            finish();
+        }
+        readFromIntent(getIntent());
+
+        pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
+        tagDetected.addCategory(Intent.CATEGORY_DEFAULT);
+        writeTagFilters = new IntentFilter[] { tagDetected };
+    }
+
+    private void setupUI() {
         tvNFCContent = (TextView) findViewById(R.id.txt_read1);
         tvNFCContent1 = (TextView) findViewById(R.id.txt_read2);
         txt_dmxadress = (TextView) findViewById(R.id.txt_dmxadress);
@@ -77,20 +94,8 @@ public class MainActivity extends AppCompatActivity {
                 showProgressBar();
             }
         });
-
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        if (nfcAdapter == null) {
-            // Stop here, we definitely need NFC
-            Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
-            finish();
-        }
-        readFromIntent(getIntent());
-
-        pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
-        tagDetected.addCategory(Intent.CATEGORY_DEFAULT);
-        writeTagFilters = new IntentFilter[] { tagDetected };
     }
+
     private void doTask(long endTimeMillis) {
         writeSettings();
         // do something
@@ -131,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
             }
     }
 
-
     /******************************************************************************
      **********************************Read From NFC Tag***************************
      ******************************************************************************/
@@ -151,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
             buildTagViews(msgs);
         }
     }
+
     private void buildTagViews(NdefMessage[] msgs) {
         if (msgs == null || msgs.length == 0) return;
 
@@ -191,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
         // Close the connection
         ndef.close();
     }
+
     private NdefRecord createRecord(String text) throws UnsupportedEncodingException {
         String lang       = "en";
         byte[] textBytes  = text.getBytes();
