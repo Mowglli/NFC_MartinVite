@@ -2,6 +2,7 @@ package com.example.nfc_martin;
 
 
 //https://www.codexpedia.com/android/android-nfc-read-and-write-example/
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.PendingIntent;
@@ -16,6 +17,7 @@ import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -36,9 +38,12 @@ public class MainActivity extends AppCompatActivity {
     Tag myTag;
     Context context;
 
-    TextView tvNFCContent,tvNFCContent1;
+    TextView tvNFCContent,tvNFCContent1, txt_dmxadress, txt_mode, txt_udlæs,txt_opsæt;
     TextView message, message2;
     Button btnWrite;
+
+    String set1;
+    String set2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,11 @@ public class MainActivity extends AppCompatActivity {
 
         tvNFCContent = (TextView) findViewById(R.id.txt_read1);
         tvNFCContent1 = (TextView) findViewById(R.id.txt_read2);
+        txt_dmxadress = (TextView) findViewById(R.id.txt_dmxadress);
+        txt_mode = (TextView) findViewById(R.id.txt_dmxmode);
+        txt_opsæt = (TextView) findViewById(R.id.txt_opsæt);
+        txt_udlæs = (TextView) findViewById(R.id.txt_udlæs);
+
         message = (TextView) findViewById(R.id.edt_write);
         message2 = (TextView) findViewById(R.id.edt_write2);
         btnWrite = (Button) findViewById(R.id.btn_write);
@@ -125,11 +135,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         String[] setList = text.split(";");
-        String set1 = setList[0];
-        String set2 = setList[1];
+        set1 = setList[0];
+        set2 = setList[1];
 
-        tvNFCContent.setText("NFC Content 1: " + set1);
-        tvNFCContent1.setText("NFC Content 2: " + set2);
+        tvNFCContent.setText(set1);
+        tvNFCContent1.setText(set2);
     }
 
 
@@ -191,8 +201,6 @@ public class MainActivity extends AppCompatActivity {
         WriteModeOn();
     }
 
-
-
     /******************************************************************************
      **********************************Enable Write********************************
      ******************************************************************************/
@@ -206,5 +214,15 @@ public class MainActivity extends AppCompatActivity {
     private void WriteModeOff(){
         writeMode = false;
         nfcAdapter.disableForegroundDispatch(this);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 }
