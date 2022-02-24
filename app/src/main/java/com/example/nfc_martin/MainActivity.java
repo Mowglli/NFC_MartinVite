@@ -90,12 +90,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
-                doTask(5000);
+                doTask(3000);
                 showProgressBar();
             }
         });
     }
-
     private void doTask(long endTimeMillis) {
         writeSettings();
         // do something
@@ -117,8 +116,9 @@ public class MainActivity extends AppCompatActivity {
                 //Do something after 5000ms
                 progressBar.setVisibility(View.INVISIBLE);
             }
-        }, 5000);
+        }, 3000);
     }
+
     private void writeSettings(){
             try {
                 if (myTag == null) {
@@ -216,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
 
         return recordNFC;
     }
-
 
 
     @Override
