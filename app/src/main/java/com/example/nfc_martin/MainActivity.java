@@ -34,10 +34,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String ERROR_DETECTED = "No NFC tag detected!";
     public static final String WRITE_SUCCESS = "Text written to the NFC tag successfully!";
     public static final String WRITE_ERROR = "Error during writing, is the NFC tag close enough to your device?";
-    public static final String APPROACH = "Approach NFC tag";
-    private static final String TAG = "NFCtransfer";
-    
-    
     NfcAdapter nfcAdapter;
     PendingIntent pendingIntent;
     IntentFilter writeTagFilters[];
@@ -53,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     String set1;
     String set2;
 
-    private boolean writePress = false;
+    private boolean writePressed = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -96,48 +92,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
-                //doTask(5000);
 
-                //btnWrite.setPressed(true);
-                writePress = true;
+                writePressed = true;
+                //doTask(5000);
                 showProgressBar();
-                writeSettings();
             }
         });
     }
-
     private void doTask(long endTimeMillis) {
-        //pendingIntent.cancel();
         writeSettings();
         // do something
-
-        /*
-
-        Handler handler = new Handler();
-
-        final Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                doTask(endTimeMillis);
-                handler.postDelayed(this, endTimeMillis);
-            }
-        };
-
-         */
-
 
         long now = System.currentTimeMillis();
         if (now < endTimeMillis) {
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 doTask(endTimeMillis);
 
-
             }, 1L);
         }
-
-
-
-
     }
     private void showProgressBar(){
         //Removes progressbar after 5 seconds
@@ -146,21 +118,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 //Do something after 5000ms
-                progressBar.setVisibility(View.INVISIBLE);
-                writePress = false;
-                Toast.makeText(context, ERROR_DETECTED, Toast.LENGTH_SHORT).show();
+                hideProgessBar();
+                writePressed = false;
             }
         }, 5000);
     }
+
+    private void hideProgessBar() {
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
     private void writeSettings(){
             try {
                 if (myTag == null) {
-                    Toast.makeText(context, ERROR_DETECTED, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(context, ERROR_DETECTED, Toast.LENGTH_LONG).show();
                 } else {
                     write(message.getText().toString() + ";" + message2.getText().toString(), myTag);
                     Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_LONG).show();
-                    writePress = false;
-                    progressBar.setVisibility(View.INVISIBLE);
+                    writePressed = false;
+                    hideProgessBar();
                 }
             } catch (IOException e) {
                 //Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG).show();
@@ -169,8 +145,6 @@ public class MainActivity extends AppCompatActivity {
                 //Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }
-
-
     }
 
     /******************************************************************************
@@ -255,24 +229,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onNewIntent(Intent intent) {
-        // Check if we want to write
-        if (writePress) {
+        if (writePressed) {
             writeSettings();
-            //readFromIntent(intent);
-            Log.d(TAG, "onNewIntent: button isPressed()");
         }
         else {
-            Log.d(TAG, "onNewIntent: Button isn't pressed");
             setIntent(intent);
             readFromIntent(intent);
             if(NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())){
                 myTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             }
         }
-
 
     }
 
