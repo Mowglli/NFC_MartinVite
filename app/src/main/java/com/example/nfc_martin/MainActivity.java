@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
         context = this;
         setupUI();
 
+        // Kommentar
+
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (nfcAdapter == null) {
