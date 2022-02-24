@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Kommentar
         // Kommentar 2
+        // Kommentar 3
 
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
