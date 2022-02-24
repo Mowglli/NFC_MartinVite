@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     String set1;
     String set2;
 
+    private boolean writePressed = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,10 +58,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         context = this;
         setupUI();
-
-        // Kommentar
-        // Kommentar 2
-        // Kommentar 36667
 
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -94,7 +92,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
-                doTask(3000);
+
+                writePressed = true;
+                //doTask(5000);
                 showProgressBar();
             }
         });
@@ -118,9 +118,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 //Do something after 5000ms
-                progressBar.setVisibility(View.INVISIBLE);
+                hideProgessBar();
+                writePressed = false;
             }
-        }, 3000);
+        }, 5000);
+    }
+
+    private void hideProgessBar() {
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     private void writeSettings(){
@@ -130,6 +135,8 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     write(message.getText().toString() + ";" + message2.getText().toString(), myTag);
                     Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_LONG).show();
+                    writePressed = false;
+                    hideProgessBar();
                 }
             } catch (IOException e) {
                 //Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG).show();
@@ -224,11 +231,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        setIntent(intent);
-        readFromIntent(intent);
-        if(NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())){
-            myTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        if (writePressed) {
+            writeSettings();
         }
+        else {
+            setIntent(intent);
+            readFromIntent(intent);
+            if(NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())){
+                myTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+            }
+        }
+
     }
 
     @Override
