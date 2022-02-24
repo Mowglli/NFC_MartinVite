@@ -117,9 +117,13 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                if (progressBar.isShown()) {
+                    hideProgessBar();
+                    writePressed = false;
+                    Toast.makeText(context, "No NFC tag detected. Try again", Toast.LENGTH_SHORT).show();
+                }
                 //Do something after 5000ms
-                hideProgessBar();
-                writePressed = false;
+
             }
         }, 5000);
     }
