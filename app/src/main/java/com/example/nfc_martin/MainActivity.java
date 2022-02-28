@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         {
             @Override
             public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);
+
 
                 writePressed = true;
                 //doTask(5000);
@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void showProgressBar(){
         //Removes progressbar after 5 seconds
+        progressBar.setVisibility(View.VISIBLE);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -141,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_LONG).show();
                     writePressed = false;
                     hideProgessBar();
+
                 }
             } catch (IOException e) {
                 //Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG).show();
@@ -235,6 +237,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
         if (writePressed) {
             writeSettings();
         }
