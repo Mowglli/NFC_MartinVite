@@ -22,8 +22,11 @@ import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -86,6 +89,26 @@ public class MainActivity extends AppCompatActivity {
         message = (TextView) findViewById(R.id.edt_write);
         message2 = (TextView) findViewById(R.id.edt_write2);
         btnWrite = (Button) findViewById(R.id.btn_write);
+        Spinner dropdown = findViewById(R.id.spinner1);
+        String[] items = new String[]{"STD", "EXT"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
+        dropdown.setAdapter(adapter);
+        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(items[i] == "STD"){
+                    message2.setText("0");
+                }
+                else if(items[i] == "EXT"){
+                    message2.setText("1");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         btnWrite.setOnClickListener(new View.OnClickListener()
         {
@@ -193,9 +216,14 @@ public class MainActivity extends AppCompatActivity {
         String[] setList = text.split(";");
         set1 = setList[0];
         set2 = setList[1];
-
+        if(set2.equals("0")){
+            tvNFCContent1.setText("STD");
+        }
+        else if(set2.equals("1")){
+            tvNFCContent1.setText("EXT");
+        }
         tvNFCContent.setText(set1);
-        tvNFCContent1.setText(set2);
+        //tvNFCContent1.setText(set2);
     }
 
     /******************************************************************************
