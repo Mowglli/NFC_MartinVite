@@ -97,10 +97,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if(items[i] == "STD"){
-                    message2.setText("0");
+                    message2.setText("1");
                 }
                 else if(items[i] == "EXT"){
-                    message2.setText("1");
+                    message2.setText("2");
                 }
             }
 
@@ -216,10 +216,10 @@ public class MainActivity extends AppCompatActivity {
         String[] setList = text.split(";");
         set1 = setList[0];
         set2 = setList[1];
-        if(set2.equals("0")){
+        if(set2.equals("1")){
             tvNFCContent1.setText("STD");
         }
-        else if(set2.equals("1")){
+        else if(set2.equals("2")){
             tvNFCContent1.setText("EXT");
         }
         tvNFCContent.setText(set1);
