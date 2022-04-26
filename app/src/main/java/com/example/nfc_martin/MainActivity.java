@@ -4,8 +4,10 @@ package com.example.nfc_martin;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.FormatException;
@@ -14,11 +16,13 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -64,6 +68,33 @@ public class MainActivity extends AppCompatActivity {
 
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        if (!nfcAdapter.isEnabled()) {
+        //https://stackoverflow.com/questions/5945100/android-changing-nfc-settings-on-off-programmatically
+            AlertDialog.Builder alertbox = new AlertDialog.Builder(context);
+            alertbox.setTitle("NFC er ikke aktiveret på enheden");
+            alertbox.setMessage("For at aktivere NFC på enheden, tryk på Tænd");
+            alertbox.setPositiveButton("Tænd", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                        startActivity(intent);
+                    }
+                }
+            });
+            alertbox.setNegativeButton("Annuller", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            alertbox.show();
+
+        }
         if (nfcAdapter == null) {
             // Stop here, we definitely need NFC
             Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
