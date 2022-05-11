@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         //https://stackoverflow.com/questions/5945100/android-changing-nfc-settings-on-off-programmatically
             AlertDialog.Builder alertbox = new AlertDialog.Builder(context);
             alertbox.setTitle("NFC er ikke aktiveret på enheden");
-            alertbox.setMessage("For at aktivere NFC på enheden, tryk på Tænd");
+            alertbox.setMessage("Tryk på Tænd, for at aktivere NFC på enheden");
             alertbox.setPositiveButton("Tænd", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -196,6 +196,13 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_LONG).show();
                     writePressed = false;
                     hideProgessBar();
+                    tvNFCContent.setText(message.getText().toString());
+                    if(message2.getText().toString().equals("1")){
+                        tvNFCContent1.setText("STD");
+                    }
+                    else if(message2.getText().toString().equals("2")){
+                        tvNFCContent1.setText("EXT");
+                    }
 
                 }
             } catch (IOException e) {
