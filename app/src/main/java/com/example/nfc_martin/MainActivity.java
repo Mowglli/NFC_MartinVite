@@ -24,7 +24,9 @@ import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -37,6 +39,8 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import pl.droidsonroids.gif.GifImageView;
+
 public class MainActivity extends AppCompatActivity {
     public static final String ERROR_DETECTED = "No NFC tag detected!";
     public static final String WRITE_SUCCESS = "Text written to the NFC tag successfully!";
@@ -47,14 +51,14 @@ public class MainActivity extends AppCompatActivity {
     boolean writeMode;
     Tag myTag;
     Context context;
-
+    GifImageView guide;
     TextView tvNFCContent,tvNFCContent1, txt_dmxadress, txt_mode, txt_udlæs,txt_opsæt;
     TextView message, message2;
     Button btnWrite;
     ProgressBar progressBar;
-
     String set1;
     String set2;
+    AlertDialog dialog;
 
     private boolean writePressed = false;
 
@@ -89,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-
                 }
             });
             alertbox.show();
@@ -109,6 +112,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupUI() {
+
+        guide = findViewById(R.id.guide);
         tvNFCContent = (TextView) findViewById(R.id.txt_read1);
         tvNFCContent1 = (TextView) findViewById(R.id.txt_read2);
         txt_dmxadress = (TextView) findViewById(R.id.txt_dmxadress);
@@ -116,9 +121,10 @@ public class MainActivity extends AppCompatActivity {
         txt_opsæt = (TextView) findViewById(R.id.txt_opsæt);
         txt_udlæs = (TextView) findViewById(R.id.txt_udlæs);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.INVISIBLE);
         message = (TextView) findViewById(R.id.edt_write);
         message2 = (TextView) findViewById(R.id.edt_write2);
+        message2.setVisibility(View.INVISIBLE);
         btnWrite = (Button) findViewById(R.id.btn_write);
         Spinner dropdown = findViewById(R.id.spinner1);
         String[] items = new String[]{"STD", "EXT"};
@@ -145,14 +151,27 @@ public class MainActivity extends AppCompatActivity {
         {
             @Override
             public void onClick(View v) {
-
-
                 writePressed = true;
                 //doTask(5000);
                 showProgressBar();
+                showGuide();
             }
         });
     }
+
+    private void showGuide() {
+                //guide.setVisibility(View.VISIBLE);
+                AlertDialog.Builder alertbox = new AlertDialog.Builder(context);
+                LayoutInflater inflater = getLayoutInflater();
+                View dialogLayout = inflater.inflate(R.layout.guide, null);
+                dialog = alertbox.create();
+                dialog.setView(dialogLayout);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+                dialog.show();
+    }
+
+
     private void doTask(long endTimeMillis) {
         writeSettings();
         // do something
@@ -167,20 +186,19 @@ public class MainActivity extends AppCompatActivity {
     }
     private void showProgressBar(){
         //Removes progressbar after 5 seconds
-        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (progressBar.isShown()) {
                     hideProgessBar();
+                    dialog.dismiss();
                     writePressed = false;
                     Toast.makeText(context, "No NFC tag detected. Try again", Toast.LENGTH_SHORT).show();
-                }
                 //Do something after 5000ms
 
             }
-        }, 5000);
+        }, 7000);
     }
 
     private void hideProgessBar() {
@@ -196,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_LONG).show();
                     writePressed = false;
                     hideProgessBar();
+                    dialog.dismiss();
                     tvNFCContent.setText(message.getText().toString());
                     if(message2.getText().toString().equals("1")){
                         tvNFCContent1.setText("STD");
@@ -203,7 +222,6 @@ public class MainActivity extends AppCompatActivity {
                     else if(message2.getText().toString().equals("2")){
                         tvNFCContent1.setText("EXT");
                     }
-
                 }
             } catch (IOException e) {
                 //Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG).show();
@@ -213,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
     }
+
 
     /******************************************************************************
      **********************************Read From NFC Tag***************************
@@ -314,7 +333,6 @@ public class MainActivity extends AppCompatActivity {
                 myTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             }
         }
-
     }
 
     @Override
