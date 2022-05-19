@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                     dialog.dismiss();
                     writePressed = false;
                     Toast.makeText(context, "No NFC tag detected. Try again", Toast.LENGTH_SHORT).show();
-                //Do something after 5000ms
+                //Do something after 7000ms
 
             }
         }, 7000);
