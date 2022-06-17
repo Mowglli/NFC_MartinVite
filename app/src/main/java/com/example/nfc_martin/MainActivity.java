@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(context, "No NFC tag detected. Try again", Toast.LENGTH_SHORT).show();
                 //Do something after 7000ms
             }
-        }, 7000);
+        }, 10000);
     }
 
     private void writeSettings(){
@@ -266,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
         // Close the connection
         ndef.close();
         Log.v("NFC", "Time to write in milliseconds is: " + (endTime - startTime));
+        Log.d("NFC transfer", "Time to write in milliseconds is: " + (endTime - startTime));
     }
 
     private NdefRecord createRecord(String text) throws UnsupportedEncodingException {
