@@ -1,6 +1,4 @@
 package com.example.nfc_martin;
-// code is taken from
-//https://www.codexpedia.com/android/android-nfc-read-and-write-example/
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -45,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String ERROR_DETECTED = "No NFC tag detected!";
     public static final String WRITE_SUCCESS = "Text written to the NFC tag successfully!";
     public static final String WRITE_ERROR = "Error during writing, is the NFC tag close enough to your device?";
+
     NfcAdapter nfcAdapter;
     PendingIntent pendingIntent;
     IntentFilter writeTagFilters[];
@@ -73,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (!nfcAdapter.isEnabled()) {
-        //https://stackoverflow.com/questions/5945100/android-changing-nfc-settings-on-off-programmatically
             AlertDialog.Builder alertbox = new AlertDialog.Builder(context);
             alertbox.setTitle("NFC er ikke aktiveret på enheden");
             alertbox.setMessage("Tryk på Tænd, for at aktivere NFC på enheden");
@@ -99,12 +97,11 @@ public class MainActivity extends AppCompatActivity {
 
         }
         if (nfcAdapter == null) {
-            // Stop here, we definitely need NFC
             Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
             finish();
         }
-        readFromIntent(getIntent());
 
+        readFromIntent(getIntent());
         pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
         tagDetected.addCategory(Intent.CATEGORY_DEFAULT);
@@ -112,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupUI() {
-
         guide = findViewById(R.id.guide);
         tvNFCContent = (TextView) findViewById(R.id.txt_read1);
         tvNFCContent1 = (TextView) findViewById(R.id.txt_read2);
@@ -152,68 +148,43 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 writePressed = true;
-                //doTask(5000);
-                showProgressBar();
+                setTimer();
                 showGuide();
             }
         });
     }
 
     private void showGuide() {
-                //guide.setVisibility(View.VISIBLE);
                 AlertDialog.Builder alertbox = new AlertDialog.Builder(context);
                 LayoutInflater inflater = getLayoutInflater();
                 View dialogLayout = inflater.inflate(R.layout.guide, null);
                 dialog = alertbox.create();
                 dialog.setView(dialogLayout);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
                 dialog.show();
     }
 
-
-    private void doTask(long endTimeMillis) {
-        writeSettings();
-        // do something
-
-        long now = System.currentTimeMillis();
-        if (now < endTimeMillis) {
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                doTask(endTimeMillis);
-
-            }, 1L);
-        }
-    }
-    private void showProgressBar(){
-        //Removes progressbar after 5 seconds
-        progressBar.setVisibility(View.INVISIBLE);
+    private void setTimer(){
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                    hideProgessBar();
                     dialog.dismiss();
                     writePressed = false;
                     Toast.makeText(context, "No NFC tag detected. Try again", Toast.LENGTH_SHORT).show();
                 //Do something after 7000ms
-
             }
         }, 7000);
-    }
-
-    private void hideProgessBar() {
-        progressBar.setVisibility(View.INVISIBLE);
     }
 
     private void writeSettings(){
             try {
                 if (myTag == null) {
-                    //Toast.makeText(context, ERROR_DETECTED, Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, ERROR_DETECTED, Toast.LENGTH_LONG).show();
                 } else {
                     write(message.getText().toString() + ";" + message2.getText().toString(), myTag);
                     Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_LONG).show();
                     writePressed = false;
-                    hideProgessBar();
                     dialog.dismiss();
                     tvNFCContent.setText(message.getText().toString());
                     if(message2.getText().toString().equals("1")){
@@ -224,18 +195,15 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             } catch (IOException e) {
-                //Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             } catch (FormatException e) {
-                //Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }
     }
 
-
-    /******************************************************************************
-     **********************************Read From NFC Tag***************************
-     ******************************************************************************/
+    /**********************************Read From NFC Tag***************************/
     private void readFromIntent(Intent intent) {
         String action = intent.getAction();
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)
@@ -257,11 +225,9 @@ public class MainActivity extends AppCompatActivity {
         if (msgs == null || msgs.length == 0) return;
 
         String text = "";
-//        String tagId = new String(msgs[0].getRecords()[0].getType());
         byte[] payload = msgs[0].getRecords()[0].getPayload();
         String textEncoding = ((payload[0] & 128) == 0) ? "UTF-8" : "UTF-16"; // Get the Text Encoding
         int languageCodeLength = payload[0] & 0063; // Get the Language Code, e.g. "en"
-        // String languageCode = new String(payload, 1, languageCodeLength, "US-ASCII");
 
         try {
             // Get the Text
@@ -280,23 +246,26 @@ public class MainActivity extends AppCompatActivity {
             tvNFCContent1.setText("EXT");
         }
         tvNFCContent.setText(set1);
-        //tvNFCContent1.setText(set2);
     }
 
-    /******************************************************************************
-     **********************************Write to NFC Tag****************************
-     ******************************************************************************/
+    /**********************************Write to NFC Tag****************************/
     private void write(String text, Tag tag) throws IOException, FormatException {
+        long startTime = 0;
+        long endTime = 0;
         NdefRecord[] records = { createRecord(text) };
         NdefMessage message = new NdefMessage(records);
         // Get an instance of Ndef for the tag.
         Ndef ndef = Ndef.get(tag);
         // Enable I/O
+
         ndef.connect();
+        startTime = System.currentTimeMillis();
         // Write the message
         ndef.writeNdefMessage(message);
+        endTime = System.currentTimeMillis();
         // Close the connection
         ndef.close();
+        Log.v("NFC", "Time to write in milliseconds is: " + (endTime - startTime));
     }
 
     private NdefRecord createRecord(String text) throws UnsupportedEncodingException {
@@ -347,16 +316,12 @@ public class MainActivity extends AppCompatActivity {
         WriteModeOn();
     }
 
-    /******************************************************************************
-     **********************************Enable Write********************************
-     ******************************************************************************/
+    /**********************************Enable Write*******************************/
     private void WriteModeOn(){
         writeMode = true;
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, writeTagFilters, null);
     }
-    /******************************************************************************
-     **********************************Disable Write*******************************
-     ******************************************************************************/
+    /**********************************Disable Write*******************************/
     private void WriteModeOff(){
         writeMode = false;
         nfcAdapter.disableForegroundDispatch(this);
